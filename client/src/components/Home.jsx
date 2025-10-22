@@ -35,7 +35,9 @@ function Home() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('/api/post/getAllPosts');
+      const { data } = await axios.get('/api/post/getAllPosts',{
+          headers: { Authorization: `Bearer ${token}` }
+      });
       
       if (data.success) {
         setPosts(data.posts);
