@@ -16,7 +16,7 @@ await connectDB();
 // CORS Configuration for Production
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://courageous-malasada-57bf0d.netlify.app/'
+  'https://cosmic-buttercream-bc92c3.netlify.app'
   
    
 ];
