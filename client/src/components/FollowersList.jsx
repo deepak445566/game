@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { ArrowLeft, Users, User, Mail, MapPin, Loader, UserCheck } from 'lucide-react';
-import api from '../config/axios';
+
 
 function FollowersList() {
   const { userId } = useParams();
@@ -23,7 +23,7 @@ function FollowersList() {
 
   const fetchProfileUser = async () => {
     try {
-      const { data } = await api.get(`/api/user/getUserProfile/${userId}`);
+      const { data } = await axios.get(`/api/user/getUserProfile/${userId}`);
       setProfileUser(data.profile || data);
     } catch (error) {
       console.error("Error fetching profile user:", error);
@@ -33,7 +33,7 @@ function FollowersList() {
   const fetchFollowers = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`/api/user/followers/${userId}`);
+      const { data } = await axios.get(`/api/user/followers/${userId}`);
       const followersWithStatus = await Promise.all(
         (data.followers || []).map(async (follower) => {
           if (!user || user._id === follower._id) {
@@ -42,7 +42,7 @@ function FollowersList() {
           
           try {
             // Check if current user is following this follower
-            const followStatusResponse = await api.get(`/api/user/check-following/${follower._id}`);
+            const followStatusResponse = await axios.get(`/api/user/check-following/${follower._id}`);
             const isFollowing = followStatusResponse.data.isFollowing;
             
             // Check if it's mutual follow (friends)
@@ -79,7 +79,7 @@ function FollowersList() {
     try {
       setFollowLoading(prev => ({ ...prev, [targetUserId]: true }));
       
-      const response = await api.post('/api/user/follow', { 
+      const response = await axios.post('/api/user/follow', { 
         followingId: targetUserId 
       });
       
@@ -112,7 +112,7 @@ function FollowersList() {
     try {
       setFollowLoading(prev => ({ ...prev, [targetUserId]: true }));
       
-      await api.post('/api/user/unfollow', { followingId: targetUserId });
+      await axios.post('/api/user/unfollow', { followingId: targetUserId });
       
       // Update the local state to reflect the unfollow
       setFollowers(prev => 

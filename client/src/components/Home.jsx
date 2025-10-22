@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
-import api from '../config/axios';
+
 
 function Home() {
   const { user, axios, setShowLogin } = useAppContext();
@@ -35,7 +35,7 @@ function Home() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get('/api/post/getAllPosts');
+      const { data } = await axios.get('/api/post/getAllPosts');
       
       if (data.success) {
         setPosts(data.posts);
@@ -62,7 +62,7 @@ function Home() {
     try {
       setLikingPost(postId);
       
-      const { data } = await api.put('/api/post/like', { postId });
+      const { data } = await axios.put('/api/post/like', { postId });
       
       if (data.success) {
         setPosts(prev => 
@@ -91,7 +91,7 @@ function Home() {
   // Fetch comments for a specific post
   const fetchComments = async (postId) => {
     try {
-      const { data } = await api.get('/api/post/comments', {
+      const { data } = await axios.get('/api/post/comments', {
         params: { postId }
       });
       
@@ -130,7 +130,7 @@ function Home() {
     if (!commentText || !user) return;
 
     try {
-      const { data } = await api.post('/api/post/comment', {
+      const { data } = await axios.post('/api/post/comment', {
         postId,
         body: commentText
       });
@@ -159,7 +159,7 @@ function Home() {
   // Delete comment
   const handleDeleteComment = async (commentId, postId) => {
     try {
-      const { data } = await api.post('/api/post/deletecomment', {
+      const { data } = await axios.post('/api/post/deletecomment', {
         commentId
       });
 

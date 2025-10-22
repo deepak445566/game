@@ -7,7 +7,7 @@ import {
   MessageCircle, Download, Edit, Globe, Phone,
   UserPlus, UserCheck, Users, Loader
 } from 'lucide-react';
-import api from '../config/axios';
+
 
 function ProfilePage() {
   const { userId } = useParams();
@@ -36,7 +36,7 @@ function ProfilePage() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`/api/user/getUserProfile/${userId}`);
+      const { data } = await axios.get(`/api/user/getUserProfile/${userId}`);
       setProfile(data.profile);
       fetchConnectionStats();
     } catch (error) {
@@ -53,7 +53,7 @@ function ProfilePage() {
 
   const fetchConnectionStats = async () => {
     try {
-      const { data } = await api.get(`/api/user/connection-counts/${userId}`);
+      const { data } = await axios.get(`/api/user/connection-counts/${userId}`);
       setConnectionStats(data.counts);
     } catch (error) {
       console.error("Error fetching connection stats:", error);
@@ -62,7 +62,7 @@ function ProfilePage() {
 
   const checkFollowingStatus = async () => {
     try {
-      const { data } = await api.get(`/api/user/check-following/${userId}`);
+      const { data } = await axios.get(`/api/user/check-following/${userId}`);
       setIsFollowing(data.isFollowing);
     } catch (error) {
       console.error("Error checking follow status:", error);
@@ -80,7 +80,7 @@ function ProfilePage() {
       
       if (isFollowing) {
         // Unfollow
-        await api.post('/api/user/unfollow', { followingId: userId });
+        await axios.post('/api/user/unfollow', { followingId: userId });
         setIsFollowing(false);
         setConnectionStats(prev => ({
           ...prev,
@@ -88,7 +88,7 @@ function ProfilePage() {
         }));
       } else {
         // Follow
-        await api.post('/api/user/follow', { followingId: userId });
+        await axios.post('/api/user/follow', { followingId: userId });
         setIsFollowing(true);
         setConnectionStats(prev => ({
           ...prev,
@@ -105,7 +105,7 @@ function ProfilePage() {
 
   const handleDownloadProfile = async () => {
     try {
-      const { data } = await api.get(`/api/user/download?id=${userId}`, {
+      const { data } = await axios.get(`/api/user/download?id=${userId}`, {
         responseType: 'blob'
       });
       

@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { ArrowLeft, Image, Video, X, Loader, Smile } from 'lucide-react';
-import api from '../config/axios';
+
 
 function CreatePost() {
   const { user, axios } = useAppContext();
@@ -69,7 +69,7 @@ function CreatePost() {
         formData.append('media', postData.media);
       }
 
-      const { data } = await api.post('/api/post/postUpload', formData, {
+      const { data } = await axios.post('/api/post/postUpload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

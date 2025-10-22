@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { ArrowLeft, FileText, User, Heart, MessageCircle, Share, Image, Video, Calendar, Edit, Trash2, Plus } from 'lucide-react';
-import api from '../config/axios';
+
 
 function MyPosts() {
   const { user, axios } = useAppContext();
@@ -21,7 +21,7 @@ function MyPosts() {
   const fetchMyPosts = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get('/api/post/getMyPosts'); // ✅ Using new route
+      const { data } = await axios.get('/api/post/getMyPosts'); // ✅ Using new route
       setPosts(data.posts || []);
     } catch (error) {
       console.error("Error fetching my posts:", error);
@@ -36,7 +36,7 @@ const handleDeletePost = async (postId) => {
   if (!window.confirm('Are you sure you want to delete this post?')) return;
 
   try {
-    const { data } = await api.delete('/api/post/delete', {
+    const { data } = await axios.delete('/api/post/delete', {
       data: { postId }  // DELETE requests send data this way
     });
 

@@ -6,7 +6,7 @@ import {
   Globe, GraduationCap, Building, Share2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import api from '../config/axios';
+
 
 function Profile() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ function Profile() {
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get('/api/user/getUserProfile');
+      const { data } = await axios.get('/api/user/getUserProfile');
       console.log("Profile data:", data);
       setProfile(data);
     } catch (error) {
@@ -50,7 +50,7 @@ function Profile() {
 
   const fetchConnectionStats = async () => {
     try {
-      const { data } = await api.get(`/api/user/connection-counts/${user._id}`);
+      const { data } = await axios.get(`/api/user/connection-counts/${user._id}`);
       setConnectionStats(data.counts);
     } catch (error) {
       console.error("Error fetching connection stats:", error);
@@ -87,7 +87,7 @@ function Profile() {
       const formData = new FormData();
       formData.append('picture', selectedFile);
 
-      const { data } = await api.post('/api/user/upload-profile', formData, {
+      const { data } = await axios.post('/api/user/upload-profile', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -114,7 +114,7 @@ function Profile() {
     try {
       setUploading(true);
       
-      const { data } = await api.post('/api/user/remove-profile-picture');
+      const { data } = await axios.post('/api/user/remove-profile-picture');
       
       if (data.success) {
         await fetchUser();

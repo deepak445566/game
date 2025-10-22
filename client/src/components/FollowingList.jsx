@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { ArrowLeft, UserPlus, User, Mail, MapPin } from 'lucide-react';
-import api from '../config/axios';
+
 
 function FollowingList() {
   const { userId } = useParams();
@@ -20,7 +20,7 @@ function FollowingList() {
 
   const fetchProfileUser = async () => {
     try {
-      const { data } = await api.get(`/api/user/getUserProfile/${userId}`);
+      const { data } = await axios.get(`/api/user/getUserProfile/${userId}`);
       setProfileUser(data.profile);
     } catch (error) {
       console.error("Error fetching profile user:", error);
@@ -30,7 +30,7 @@ function FollowingList() {
   const fetchFollowing = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`/api/user/following/${userId}`);
+      const { data } = await axios.get(`/api/user/following/${userId}`);
       setFollowing(data.following);
     } catch (error) {
       console.error("Error fetching following:", error);
@@ -47,7 +47,7 @@ function FollowingList() {
     }
 
     try {
-      await api.post('/api/user/follow', { followingId: targetUserId });
+      await axios.post('/api/user/follow', { followingId: targetUserId });
       fetchFollowing(); // Refresh the list
     } catch (error) {
       console.error("Error following user:", error);
@@ -57,7 +57,7 @@ function FollowingList() {
 
   const handleUnfollow = async (targetUserId) => {
     try {
-      await api.post('/api/user/unfollow', { followingId: targetUserId });
+      await axios.post('/api/user/unfollow', { followingId: targetUserId });
       fetchFollowing(); // Refresh the list
     } catch (error) {
       console.error("Error unfollowing user:", error);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { Users, Search, UserPlus, UserCheck, Mail, MapPin } from 'lucide-react';
-import api from '../config/axios';
+
 
 function Network() {
   const { user, axios } = useAppContext();
@@ -22,7 +22,7 @@ function Network() {
   const fetchAllUsers = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get('/api/user/getAllUserProfile');
+      const { data } = await axios.get('/api/user/getAllUserProfile');
       // Filter out current user from the list
       const otherUsers = data.profiles?.filter(profile => 
         profile.userId?._id !== user._id
@@ -42,7 +42,7 @@ function Network() {
     try {
       setFollowLoading(prev => ({ ...prev, [targetUserId]: true }));
       
-      await api.post('/api/user/follow', { 
+      await axios.post('/api/user/follow', { 
         followingId: targetUserId 
       });
       
@@ -71,7 +71,7 @@ function Network() {
     try {
       setFollowLoading(prev => ({ ...prev, [targetUserId]: true }));
       
-      await api.post('/api/user/unfollow', { followingId: targetUserId });
+      await axios.post('/api/user/unfollow', { followingId: targetUserId });
       
       // Update the local state to reflect the unfollow
       setUsers(prev => 

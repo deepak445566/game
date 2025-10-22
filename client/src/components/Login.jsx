@@ -2,13 +2,14 @@ import React from 'react';
 
 import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import api from '../config/axios';
+
 import { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 
 
+
 function Login() {
-  const { setShowLogin, setUser, fetchUser, loading } = useAppContext();
+  const { setShowLogin, setUser, fetchUser, loading,axios } = useAppContext();
   const navigate = useNavigate();
   const [state, setState] = useState("login"); // ✅ React.useState use karo
   const [name, setName] = useState("");
@@ -29,7 +30,7 @@ const onSubmitHandle = async (e) => {
       ? { name, username, email, password }
       : { email, password };
 
-    const { data } = await api.post(`/api/user/${state}`, payload);
+    const { data } = await axios.post(`/api/user/${state}`, payload);
 
     if (data.success && data.token) {
       // ✅ Store token AND user data together

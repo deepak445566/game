@@ -5,7 +5,7 @@ import {
   ArrowLeft, Save, Plus, Trash2, Briefcase,
   GraduationCap, BookOpen, MapPin, User
 } from 'lucide-react';
-import api from '../config/axios';
+
 
 function EditProfile() {
   const { user, axios } = useAppContext();
@@ -31,7 +31,7 @@ function EditProfile() {
   const fetchProfileData = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get('/api/user/getUserProfile');
+      const { data } = await axios.get('/api/user/getUserProfile');
       setProfile(data);
       setFormData({
         bio: data?.bio || '',
@@ -109,7 +109,7 @@ function EditProfile() {
     e.preventDefault();
     try {
       setSaving(true);
-      const { data } = await api.post('/api/user/update-profile', formData);
+      const { data } = await axios.post('/api/user/update-profile', formData);
       
       if (data.message === "Profile updated successfully") {
         navigate('/profile');

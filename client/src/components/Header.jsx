@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { Home, User, Edit3, LogOut, Plus, FileText } from 'lucide-react';
-import api from '../config/axios';
+
 
 function Header() {
   const { user, setShowLogin, setUser, axios } = useAppContext();
@@ -12,7 +12,7 @@ function Header() {
   
   const handleLogout = async () => {
     try {
-      await api.post('/api/user/logout');
+      await axios.post('/api/user/logout');
     } catch (error) {
       console.error("Logout error:", error);
     } finally {

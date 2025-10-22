@@ -1,6 +1,12 @@
 // src/context/AppContext.js - FIXED VERSION
 import React, { createContext, useState, useContext, useEffect } from "react";
-import api from "../config/axios";
+
+import axios from "axios";
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+
+
 
 export const AppContext = createContext();
 
@@ -51,10 +57,7 @@ export const AppContextProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  // ✅ Manual user refresh function
-  const refreshUser = async () => {
-    await fetchUser();
-  };
+
 
   const value = {
     user,
@@ -63,11 +66,9 @@ export const AppContextProvider = ({ children }) => {
     setShowLogin,
     loading,
     authChecked,
-    fetchUser: refreshUser, // ✅ Better naming
-    clearAuthData: () => {
-      localStorage.removeItem("token");
-      setUser(null);
-    }
+axios
+   
+   
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
