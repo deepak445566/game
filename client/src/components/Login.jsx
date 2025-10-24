@@ -20,6 +20,8 @@ function Login() {
   const [submitting, setSubmitting] = useState(false);
 
  // Login.jsx - BETTER SOLUTION
+// Login.jsx - FIXED
+// Login.jsx - Add debugging
 const onSubmitHandle = async (e) => {
   e.preventDefault();
   setError("");
@@ -30,12 +32,21 @@ const onSubmitHandle = async (e) => {
       ? { name, username, email, password }
       : { email, password };
 
+    console.log("🔄 Sending login request...", payload);
+    
     const { data } = await axios.post(`/api/user/${state}`, payload);
 
+    console.log("✅ Login response:", data);
+
     if (data.success && data.token) {
+      console.log("💾 Storing token and user data...");
+      
       // ✅ Store token AND user data together
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      
+      console.log("📦 Token stored:", data.token.substring(0, 20) + "...");
+      console.log("👤 User stored:", data.user);
       
       // ✅ Update context immediately
       setUser(data.user);
@@ -45,16 +56,17 @@ const onSubmitHandle = async (e) => {
       navigate('/');
       resetForm();
       
-      // ✅ Optional: Refresh auth state in background
+      // ✅ Refresh auth state
       setTimeout(() => {
         fetchUser();
-      }, 1000);
+      }, 500);
       
     } else {
+      console.log("❌ Login failed:", data.message);
       setError(data.message || "Authentication failed");
     }
   } catch (error) {
-    console.error("Auth error:", error);
+    console.error("🚨 Auth error:", error);
     const errorMessage = error.response?.data?.message || 
                         error.response?.data?.error || 
                         error.message || 
@@ -64,7 +76,6 @@ const onSubmitHandle = async (e) => {
     setSubmitting(false);
   }
 };
-
   const resetForm = () => {
     setName("");
     setUsername("");

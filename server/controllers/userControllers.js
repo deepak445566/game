@@ -142,7 +142,18 @@ export const loginUser = async (req, res) => {
 
 export const isAuth = async (req, res) => {
   try {
-    const token = req.cookies.token;
+    let token;
+
+    // ✅ Check Authorization header first (for frontend)
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1]; // remove 'Bearer '
+    }
+    // ✅ Fallback: Check cookies (if using cookies)
+    else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    }
+
     if (!token) {
       return res.status(401).json({ 
         success: false, 
@@ -186,7 +197,6 @@ export const isAuth = async (req, res) => {
     });
   }
 };
-
 
 
 

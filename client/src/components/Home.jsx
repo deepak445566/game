@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 function Home() {
-  const { user, axios, setShowLogin } = useAppContext();
+  const { user, axios, setShowLogin,setUser } = useAppContext();
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +13,8 @@ function Home() {
   const [showCommentsPopup, setShowCommentsPopup] = useState(null);
   const [postComments, setPostComments] = useState({});
   const [likingPost, setLikingPost] = useState(null);
+
+
 
   // ✅ Handle profile picture click
   const handleProfileClick = (userId) => {
@@ -31,13 +33,12 @@ function Home() {
     fetchPosts();
   }, [user]);
 
-  // Fetch all posts
+  // Fetch all posts - FIXED: Remove manual token header
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('/api/post/getAllPosts',{
-          headers: { Authorization: `Bearer ${token}` }
-      });
+      const { data } = await axios.get('/api/post/getAllPosts');
+      // ✅ axios automatically includes the token via interceptors
       
       if (data.success) {
         setPosts(data.posts);
@@ -46,7 +47,11 @@ function Home() {
       }
     } catch (error) {
       console.error("Error fetching posts:", error);
-      if (error.response?.status !== 401) {
+      if (error.response?.status === 401) {
+        // Token might be invalid, clear it
+        localStorage.removeItem('token');
+        setUser(null);
+      } else {
         setError('Failed to load posts');
       }
     } finally {
@@ -54,6 +59,7 @@ function Home() {
     }
   };
 
+  // ... rest of your Home component remains the same
   // ✅ LIKE/UNLIKE FUNCTION WITH ANIMATION
   const handleLike = async (postId) => {
     if (!user) {
