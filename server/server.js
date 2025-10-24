@@ -6,46 +6,85 @@ import connectDB from './config/db.js';
 import postRouter from './routes/postRoutes.js';
 import userRouter from './routes/userRoutes.js';
 
-
 dotenv.config();
 const app = express();
+
+// ✅ Pehle CORS use karo (important!)
 app.use(cookieParser());
-await connectDB();
 
-
-// CORS Configuration for Production
+// ✅ Improved CORS Configuration
 const allowedOrigins = [
   'http://localhost:5173',
   'https://game-tawny-nine-64.vercel.app'
-  
-   
 ];
 
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  exposedHeaders: ["Authorization"]
+}));
 
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
+// ✅ Pre-flight requests handle karo
+app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/api/post',postRouter);
-app.use('/api/user',userRouter);
 
-app.use(express.static("uploads"))
+// ✅ Health check route add karo
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ 
+    success: true,
+    message: 'Server is running!',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
 
+app.use('/api/post', postRouter);
+app.use('/api/user', userRouter);
+app.use(express.static("uploads"));
 
+// ✅ Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Server Error:', err);
+  res.status(500).json({ 
+    success: false,
+    message: 'Internal Server Error',
+    error: process.env.NODE_ENV === 'production' ? {} : err.message
+  });
+});
 
-
-
+// ✅ 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
+  });
+});
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 
-
+// ✅ Better server startup
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+      console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔗 Allowed Origins: ${allowedOrigins.join(', ')}`);
+    });
+  })
+  .catch((error) => {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  });
