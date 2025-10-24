@@ -16,7 +16,7 @@ await connectDB();
 // CORS Configuration for Production
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://cosmic-buttercream-bc92c3.netlify.app'
+  'https://game-tawny-nine-64.vercel.app'
   
    
 ];
