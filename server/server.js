@@ -35,8 +35,7 @@ app.use(cors({
   exposedHeaders: ["Authorization"]
 }));
 
-// ✅ Pre-flight requests handle karo
-app.options('*', cors());
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -62,14 +61,6 @@ app.use((err, req, res, next) => {
     success: false,
     message: 'Internal Server Error',
     error: process.env.NODE_ENV === 'production' ? {} : err.message
-  });
-});
-
-// ✅ 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found'
   });
 });
 
